@@ -1,0 +1,4 @@
+exit unless Input.cart.discount_code
+
+Input.cart.discount_code.reject({ message: 'Sorry, No Additional Discounts' })
+Output.cart = Input.cart
