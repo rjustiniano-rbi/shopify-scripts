@@ -1,0 +1,51 @@
+# Buy two of X item for $Y
+
+# Applied product types
+PRODUCT_TYPES = ["Backpack"]
+
+# Custom message
+CHECKOUT_MESSAGE = "Get two for $50"
+
+# Price for pair in dollars
+PAIR_PRICE = 50
+
+
+# === Do not change anything below ===
+
+cart = Input.cart
+
+applied_items = []
+
+pair_item_price = Decimal.new(PAIR_PRICE) / 2.00
+
+# Find products
+cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  # If product is in category and qty > 1
+  if PRODUCT_TYPES.collect{|el| el.downcase }.include?(product.product_type.downcase) and
+    line_item.quantity > 1
+    applied_items.push(line_item)
+  end
+
+end
+
+
+# Exclude non-paired items
+applied_items.each_with_index do |item, index|
+  if item.quantity % 2 != 0
+    non_pair = applied_items[index].split(take: 1) 
+    cart.line_items.push(non_pair)
+  end
+end
+
+  # Apply new price
+  applied_items.each do |item|
+    new_item_price = Money.new(cents: 100) * pair_item_price
+    new_line_price = item.quantity * new_item_price
+    if (item.line_price > new_line_price)
+      item.change_line_price(new_line_price, message: CHECKOUT_MESSAGE)
+    end
+  end
+
+
+Output.cart = Input.cart
