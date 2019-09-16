@@ -1,0 +1,18 @@
+productid = 1234567890
+
+Input.cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  puts product.id
+  next if product.gift_card?
+  next unless product.id == productid
+  case Input.cart.discount_code
+  when CartDiscount::Percentage
+    Input.cart.discount_code.reject({message: "Cannot be used with This Product"})
+  when CartDiscount::FixedAmount
+    Input.cart.discount_code.reject({message: "Cannot be used with this product"})
+  when CartDiscount::Shipping
+    Input.cart.discount_code.reject({message: "Cannot be used with this product"})
+  end
+end
+
+Output.cart = Input.cart
