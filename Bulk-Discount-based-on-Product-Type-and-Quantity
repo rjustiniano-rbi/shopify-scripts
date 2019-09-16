@@ -1,0 +1,39 @@
+# Bulk Discount based on Product Category and Quantity
+
+# Applied product types
+# Example with 2 categories: ["Backpack", "T-Shirt"]
+PRODUCT_TYPES = ["Backpack"]
+
+# Custom message
+CHECKOUT_MESSAGE = "Bulk Discount 25% Off"
+
+# Discount value, should be a number without "%"
+DISCOUNT_VALUE = 25
+
+# Minimum quantity of the product when discount should apply
+REQUIRED_QUANTITY = 10
+
+
+# === Do not change anything below ===
+
+percent_discount = Decimal.new(DISCOUNT_VALUE) / 100.0
+
+cart = Input.cart
+
+
+  cart.line_items.each do |line_item|
+    product = line_item.variant.product
+    # Check the product type
+    if PRODUCT_TYPES.collect{|el| el.downcase }.include?(product.product_type.downcase)
+      # Check product quantity
+      if line_item.quantity >= REQUIRED_QUANTITY
+        # Apply discount
+        line_discount = line_item.line_price * percent_discount
+        line_item.change_line_price(line_item.line_price - line_discount, message: CHECKOUT_MESSAGE)
+      end
+   end
+
+  end
+  
+
+Output.cart = Input.cart
