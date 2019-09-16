@@ -1,0 +1,39 @@
+# Spend $A, get B% off, spend $C get D% off, spend $E get F% off
+
+# Custom Message
+CHECKOUT_MESSAGE = "Special discount"
+
+# Discount rules
+# ORDER MINIMUM IN DOLLARS => DISCOUNT VALUE (%)
+DISCOUNT_RULES = {
+  50    => 5,
+  100   => 10,
+  150   => 30
+}
+
+
+# === Do not change anything below ===
+
+cart = Input.cart
+subtotal = cart.subtotal_price_was
+
+# Sort discount rules by descending order
+DISCOUNT_RULES = DISCOUNT_RULES.sort_by {|k,v| v}.reverse.to_h
+
+# each if fits => apply discount & exit
+DISCOUNT_RULES.each do |min_amount, discount_value|
+  min_amount_value = Money.new(cents: 100) * min_amount
+  percent_discount = Decimal.new(discount_value) / 100.0
+  
+  if subtotal >= min_amount_value
+    cart.line_items.each do |line_item|
+      product = line_item.variant.product
+      next if product.gift_card?
+      line_discount = line_item.line_price * percent_discount
+      line_item.change_line_price(line_item.line_price - line_discount, message: CHECKOUT_MESSAGE) unless discount_value == 0
+    end
+    break
+  end
+end
+
+Output.cart = Input.cart
