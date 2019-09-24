@@ -1,4 +1,4 @@
-# Check for the percetnage case in the cupon. It can be used as well with the 
+# Check for the percentage case in the coupon. It can be used as well with the 
 case Input.cart.discount_code
 when CartDiscount::Percentage
   discount_code_string = Input.cart.discount_code.code
