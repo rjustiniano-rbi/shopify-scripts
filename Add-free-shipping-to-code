@@ -1,0 +1,12 @@
+# EXTRA15: Free Shipping ======================================
+MESSAGE = "Free Shipping" #promotional message
+
+if Input.cart.discount_code && Input.cart.discount_code.code == "EXTRA15"
+    Input.shipping_rates.each do |shipping_rate|
+    next unless shipping_rate.source == "shopify"
+    next unless shipping_rate.name == "Ground"
+    shipping_rate.apply_discount(shipping_rate.price, message: MESSAGE)
+    end
+end
+
+Output.shipping_rates = Input.shipping_rates
