@@ -1,0 +1,17 @@
+# CWYAPPAREL: Callaway Golf Employee Discount ======================================
+
+discountCode = "CWYAPPAREL"
+
+if Input.cart.discount_code && Input.cart.discount_code.code == discountCode
+    @percent = Decimal.new(50) / 100.0
+    Input.cart.line_items.each do |line_item|
+    product = line_item.variant.product
+    next if product.gift_card?
+    next if product.tags.include?('Clearance')
+    next unless Input.cart.discount_code
+    line_discount = line_item.line_price * @percent
+    line_item.change_line_price(line_item.line_price - line_discount, message: "50% off Full Price")
+    end
+end
+
+Output.cart = Input.cart
