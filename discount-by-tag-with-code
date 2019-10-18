@@ -1,6 +1,6 @@
 # CWYAPPAREL: Callaway Golf Employee Discount ======================================
 
-discountCode = "CWYAPPAREL"
+discountCode = 'CWYAPPAREL'
 
 if Input.cart.discount_code && Input.cart.discount_code.code == discountCode
     @percent = Decimal.new(50) / 100.0
