@@ -1,0 +1,1 @@
+line_item.change_line_price(Money.new(cents:2999), message: "$99 SUIT SET")
