@@ -50,7 +50,7 @@ end
 Input.cart.line_items.each do |line_item|
     product = line_item.variant.product
     next if product.gift_card?
-    next unless product.tags.include?('Suit Jackets') && product.tags.include?('99 suits')
+    next unless product.product_type.include?('Suit Jackets') && product.tags.include?('99 suits')
     line_item.change_line_price(Money.new(cents:6999), message: "$99 SUIT SET")
     end
 
