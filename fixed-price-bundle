@@ -1,0 +1,59 @@
+# $99 SUIT SET + FREE SHIPPING
+
+discountCode = 'BRADSPE'
+
+if Input.cart.discount_code && Input.cart.discount_code.code == discountCode
+
+PAID_ITEM_COUNT = 1
+DISCOUNTED_ITEM_COUNT = 1
+
+def discounted_items_to_find(total_items_seen, discounted_items_seen)
+  Integer(total_items_seen / (PAID_ITEM_COUNT + DISCOUNTED_ITEM_COUNT) * DISCOUNTED_ITEM_COUNT) - discounted_items_seen
+end
+
+def partition(cart, line_items)
+  sorted_items = line_items.sort_by{|line_item| line_item.variant.price}.reverse
+  discounted_items = []
+  total_items_seen = 0
+  discounted_items_seen = 0
+
+  # Loop over all the items and find those to be discounted
+  sorted_items.each do |line_item|
+    total_items_seen += line_item.quantity
+    count = discounted_items_to_find(total_items_seen, discounted_items_seen)
+    next if count <= 0
+
+    if count >= line_item.quantity
+      discounted_items.push(line_item)
+      discounted_items_seen += line_item.quantity
+    else
+      discounted_item = line_item.split(take: count)
+      position = cart.line_items.find_index(line_item)
+      cart.line_items.insert(position + 1, discounted_item)
+      discounted_items.push(discounted_item)
+      discounted_items_seen += discounted_item.quantity
+    end
+  end
+  discounted_items
+end
+
+eligible_items = Input.cart.line_items.select do |line_item|
+  product = line_item.variant.product
+  !product.gift_card? && product.tags.include?('99 suits')
+end
+
+discounted_line_items = partition(Input.cart, eligible_items)
+discounted_line_items.each do |line_item|
+  line_item.change_line_price(Money.new(cents:2999), message: "$99 SUIT SET")
+end
+
+Input.cart.line_items.each do |line_item|
+    product = line_item.variant.product
+    next if product.gift_card?
+    next unless product.tags.include?('Suit Jackets') && product.tags.include?('99 suits')
+    line_item.change_line_price(Money.new(cents:6999), message: "$99 SUIT SET")
+    end
+
+end
+
+Output.cart = Input.cart
