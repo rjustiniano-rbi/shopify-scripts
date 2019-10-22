@@ -1,0 +1,3 @@
+tags_needed = ['men', 'women']
+
+next unless tags_needed.include?(line_item.variant.product.tags)
