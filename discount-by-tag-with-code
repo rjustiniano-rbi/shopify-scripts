@@ -10,7 +10,7 @@ if Input.cart.discount_code && Input.cart.discount_code.code == discountCode
     next if product.tags.include?('Clearance')
     next unless Input.cart.discount_code
     line_discount = line_item.line_price * @percent
-    line_item.change_line_price(line_item.line_price - line_discount, message: "50% off Full Price")
+    line_item.change_line_price(line_item.line_price * 0.50, message: "50% off Full Price")
     end
 end
 
