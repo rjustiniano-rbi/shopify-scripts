@@ -1,11 +1,9 @@
-productid = 1234567890
-
 Input.cart.line_items.each do |line_item|
  product = line_item.variant.product
  puts product.id
  next if product.gift_card?
- next unless product.id == ma770id
- case Input.cart.discount_code
+ next unless product.tags.include?('tag')
+ case Input.cart.discount_code.code
  when 'yesdiscount'
       #code here if yesdiscount is discount_code
  else 
