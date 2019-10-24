@@ -1,0 +1,25 @@
+# 3-For-99-Promo *************************
+
+MIN_QTY_IN_CART = 3 # Number of "products" to trigger the discount
+DISCOUNT_MESSAGE = '3 for $99'
+ 
+# Create an array of all line item quantities
+
+items_quantities = Input.cart&.line_items&.map { |item| item.quantity }
+items_quantities_total = items_quantities.reduce(0, :+)
+ 
+if items_quantities_total >= MIN_QTY_IN_CART
+ 
+  # Loop through the items in the cart
+  Input.cart.line_items.each do |line_item|
+    next if line_item.variant.product.gift_card?
+      line_item.change_line_price(Money.new(cents:3300),
+      # Add your custom message. It will appear on the Cart and Checkout pages
+      message: DISCOUNT_MESSAGE,
+    )
+  end 
+ 
+end
+
+ 
+Output.cart = Input.cart
