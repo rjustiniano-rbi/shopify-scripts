@@ -1,0 +1,13 @@
+payment_gateways = Input.payment_gateways
+
+Input.cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  if product.tags.index('no-checkout') != nil
+    payment_gateways.delete_if do |payment_gateway|
+      payment_gateway != ''
+    end
+    break
+  end
+end
+
+Output.payment_gateways = payment_gateways
