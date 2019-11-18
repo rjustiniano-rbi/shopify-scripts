@@ -1,0 +1,31 @@
+
+if Input.cart.discount_code != nil && Input.cart.discount_code.code == "SINGLESDAY"
+  @percent = Decimal.new(40) / 100.0
+  Input.cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  next if product.gift_card?
+  next unless product.tags.include?('Exclusives')
+  line_discount = line_item.line_price * @percent
+  line_item.change_line_price(line_item.line_price - line_discount, message: "Extra 40% Off Exclusives")
+  end
+else
+  @percent = Decimal.new(30) / 100.0
+  Input.cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  next if product.gift_card?
+  next if product.tags.include?('Line:Denim')
+  next unless product.tags.include?('Sale') or product.tags.include?('promothirtyoff')
+  case Input.cart.discount_code
+  when CartDiscount::Percentage
+    Input.cart.discount_code.reject({message: "Cannot be used with This Product"})
+  when CartDiscount::FixedAmount
+    Input.cart.discount_code.reject({message: "Cannot be used with this product"})
+  when CartDiscount::Shipping
+    Input.cart.discount_code.reject({message: "Cannot be used with this product"})
+  end
+  line_discount = line_item.line_price * @percent
+  line_item.change_line_price(line_item.line_price - line_discount, message: "Extra 30% Off Sale")
+  end
+end
+
+Output.cart = Input.cart
