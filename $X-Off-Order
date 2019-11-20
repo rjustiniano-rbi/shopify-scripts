@@ -1,0 +1,29 @@
+#$20 Off $125 ======================================
+
+min_discount_order_amount = Money.new(cents:100) * 125
+total = Input.cart.subtotal_price
+
+new_total = total
+discount_code = Input.cart&.discount_code
+
+if discount_code
+  if discount_code&.is_a?(CartDiscount::FixedAmount)
+    discount_amount = discount_code&.amount
+    new_total = total - discount_amount
+  elsif discount_code&.is_a?(CartDiscount::Percentage)
+    discount_percentage = 1.to_d - (discount_code&.percentage / 100)
+    new_total = total * discount_percentage
+  end
+end
+
+discount_order = Money.new(cents:2000 / Input.cart.line_items.size )
+
+if new_total > min_discount_order_amount
+  Input.cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  next if product.gift_card?
+  line_item.change_line_price(line_item.line_price - discount_order, message: "$20 Off $125")
+  end
+end
+
+Output.cart = Input.cart
