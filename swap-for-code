@@ -1,0 +1,8 @@
+if Input.cart.discount_code && Input.cart.discount_code.code == "OPSIGNUP"
+elsif Input.cart.discount_code && Input.cart.discount_code.code == "OPEMAIL"
+elsif Input.cart.discount_code && Input.cart.discount_code.code == "OPKENA2019"
+elsif Input.cart.discount_code && Input.cart.discount_code.code == "EMPOPG392"
+elsif Input.cart.discount_code && Input.cart.discount_code.code == "EMPOPG546"
+else
+  #discount
+end
