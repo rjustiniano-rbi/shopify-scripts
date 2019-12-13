@@ -1,0 +1,34 @@
+# FREE 2-DAY SHIPPING WITH $125 PURCHASE *******************************
+ELIGIBLE_2DAY_SERVICES = ['Ground','Standard','2nd Day']
+
+min_discount_order_amount = Money.new(cents:100) * 125
+total = Input.cart.subtotal_price
+
+new_total = total
+discount_code = Input.cart&.discount_code
+
+if discount_code
+  if discount_code&.is_a?(CartDiscount::FixedAmount)
+    discount_amount = discount_code&.amount
+    new_total = total - discount_amount
+  elsif discount_code&.is_a?(CartDiscount::Percentage)
+    discount_percentage = 1.to_d - (discount_code&.percentage / 100)
+    new_total = total * discount_percentage
+  end
+end
+
+discount = if new_total > min_discount_order_amount
+              1
+            else
+              0
+            end
+message = "Free 2-Day Shipping with $125 purchase"
+
+Input.shipping_rates.each do |shipping_rate|
+  next unless shipping_rate.source == "shopify"
+  if ELIGIBLE_2DAY_SERVICES.include?(shipping_rate.name)
+    shipping_rate.apply_discount(shipping_rate.price * discount, message: message)
+  end
+end
+
+Output.shipping_rates = Input.shipping_rates
