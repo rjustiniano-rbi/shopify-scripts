@@ -1,1 +1,14 @@
-line_item.change_line_price(Money.new(cents:2999), message: "$99 SUIT SET")
+# 40% Off Sale unless - OPPOLOS
+if Input.cart.discount_code && Input.cart.discount_code.code == "OPPOLOS"
+  @percent = Decimal.new(40) / 100.0
+  Input.cart.line_items.each do |line_item|
+  product = line_item.variant.product
+  next if product.gift_card?
+  #next if product.tags.include?('Exclusives')
+  next unless product.tags.include?('Exclusives')
+  line_discount = line_item.line_price * @percent
+  line_item.change_line_price(Money.new(cents:1999*line_item.quantity), message: "$19.99 Polos")
+  end
+end
+
+Output.cart = Input.cart
