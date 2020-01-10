@@ -1,0 +1,38 @@
+min_discount_order_amount = Money.new(cents:100) * 200
+total = Input.cart.subtotal_price
+
+new_total = total
+discount_code = Input.cart&.discount_code
+
+if discount_code
+  if discount_code&.is_a?(CartDiscount::FixedAmount)
+    discount_amount = discount_code&.amount
+    new_total = total - discount_amount
+  elsif discount_code&.is_a?(CartDiscount::Percentage)
+    discount_percentage = 1.to_d - (discount_code&.percentage / 100)
+    new_total = total * discount_percentage
+  end
+end
+
+discount = if new_total > min_discount_order_amount
+@percent = Decimal.new(40) / 100.0
+Input.cart.line_items.each do |line_item|
+product = line_item.variant.product
+next if product.gift_card?
+next if product.tags.include?('PEA')
+next if product.tags.include?('Watches')
+next if product.tags.include?('Sale Watches')
+next if product.tags.include?('Final Sale')
+next if product.tags.include?('Fragrances')
+next if product.tags.include?('Promotion_Exclusions')
+line_discount = line_item.line_price * @percent
+line_item.change_line_price(line_item.line_price - line_discount, message: "EXTRA 40% OFF")
+end
+else
+  # NOTHING
+end
+
+if new_total < min_discount_order_amount
+end
+
+Output.cart = Input.cart
