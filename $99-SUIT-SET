@@ -1,0 +1,32 @@
+# $99 SUIT SET *******************************
+
+Input.cart.line_items.each_with_index do |line_item, index|
+
+    items_quantities = 0
+
+    # Loop over all the items to find eligble ones and total
+    eligible_items = Input.cart.line_items.select do |line_item|
+        product = line_item.variant.product
+        !product.gift_card? && product.tags.include?('Promotion_Suits99')
+    end
+
+    total_items = 0
+
+    eligible_items.each do |line_item|
+      total_items += line_item.quantity
+    end
+
+    if total_items > 1
+      Input.cart.line_items.each do |line_item|
+        product = line_item.variant.product
+        next unless product.tags.include?('Promotion_Suits99') && product.tags.include?('Suit Pants')
+        line_item.change_line_price(Money.new(cents:3000*line_item.quantity), message: "$99 Suit Set")
+      end
+      Input.cart.line_items.each do |line_item|
+        product = line_item.variant.product
+        next unless product.tags.include?('Promotion_Suits99') && product.tags.include?('Suit Jackets')
+        line_item.change_line_price(Money.new(cents:6900*line_item.quantity), message: "$99 Suit Set")
+      end
+    end
+
+end
