@@ -1,0 +1,33 @@
+# 10% Off Loyalty ======================================
+
+VIP_CUSTOMER_TAG0 = 'accepts_loyalty'
+VIP_CUSTOMER_TAG1 = 'silver'
+VIP_CUSTOMER_TAG2 = 'gold'
+
+if !Input.cart.customer.nil? and Input.cart.customer.tags.include?(VIP_CUSTOMER_TAG0)
+    @percent = Decimal.new(10) / 100.0
+    Input.cart.line_items.each do |line_item|
+    product = line_item.variant.product
+    next if product.gift_card?
+    line_discount = line_item.line_price * @percent
+    line_item.change_line_price(line_item.line_price - line_discount, message: "Extra 10% Off")
+    end
+elsif !Input.cart.customer.nil? and Input.cart.customer.tags.include?(VIP_CUSTOMER_TAG1)
+    @percent = Decimal.new(10) / 100.0
+    Input.cart.line_items.each do |line_item|
+    product = line_item.variant.product
+    next if product.gift_card?
+    line_discount = line_item.line_price * @percent
+    line_item.change_line_price(line_item.line_price - line_discount, message: "Extra 10% Off")
+    end
+elsif !Input.cart.customer.nil? and Input.cart.customer.tags.include?(VIP_CUSTOMER_TAG2)
+    @percent = Decimal.new(10) / 100.0
+    Input.cart.line_items.each do |line_item|
+    product = line_item.variant.product
+    next if product.gift_card?
+    line_discount = line_item.line_price * @percent
+    line_item.change_line_price(line_item.line_price - line_discount, message: "Extra 10% Off")
+    end
+end
+
+Output.cart = Input.cart
