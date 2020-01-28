@@ -1,0 +1,22 @@
+discount =  Money.new(cents:0) # initial discount
+
+min_discount_order_amount = Money.new(cents:100) * 100 # $500 to cents, to fire the discount flag
+
+total = Input.cart.subtotal_price_was
+discount = Money.new(cents: 100) * 25 if total > min_discount_order_amount  #discount amount you are offering in cents
+  message = "$25 Off $100" #discount message shown to customer
+  high = Input.cart.line_items[0]
+
+  Input.cart.line_items.each do |line_item|
+  if high.variant.price < line_item.variant.price
+    high = line_item
+  end
+end
+
+Input.cart.line_items.each do |line_item|
+ if high == line_item
+    line_item.change_line_price((high.variant.price*line_item.quantity) - discount, message: message)
+  end
+end
+
+Output.cart = Input.cart
