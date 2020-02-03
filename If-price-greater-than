@@ -1,0 +1,1 @@
+line_item.variant.price >= Money.new(cents:3000)
